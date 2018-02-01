@@ -1,5 +1,9 @@
 const express = require('express')
 const app = express()
+const bodyParser = require('body-parser')
+
+app.use(bodyParser.json())
+
 
 app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
@@ -28,6 +32,13 @@ let persons = [
   }
 ]
 
+const generateId = () => {
+  function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+  }
+  return getRandomInt(Math.pow(2,16))
+}
+
 app.get('/api/persons', (req, res) => {
   res.json(persons)
 })
@@ -46,6 +57,24 @@ app.get('/api/persons/:id', (request, response) => {
 app.get('/info', (req, res) => {
   res.send(`<div>puhelinluettelossa ${persons.length} henkilön tiedot</div> <br>
             ${Date()}</br>`)
+})
+
+app.post('/api/persons', (request, response) => {
+  const body = request.body
+
+  if (body.name === undefined) {
+    return response.status(400).json({ error: 'content missing' })
+  }
+
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: generateId()
+  }
+
+  persons = persons.concat(person)
+
+  response.json(person)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
