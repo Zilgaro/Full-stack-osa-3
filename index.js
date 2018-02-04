@@ -20,8 +20,12 @@ app.get('/', (req, res) => {
 app.get('/api/persons', (request, response) => {
   Person
     .find({})
+
     .then(persons => {
       response.json(persons.map(Person.format))
+    })
+    .catch(error => {
+      console.log(error)
     })
 })
 
@@ -68,13 +72,22 @@ app.post('/api/persons', (request, response) => {
     .then(savedPerson => {
       response.json(Person.format(savedPerson))
     })
+    .catch(error => {
+      console.log(error)
+    })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  persons = persons.filter(person => person.id !== id)
-
-  response.status(204).end()
+  const id = request.params.id
+  console.log(id)
+    Person
+    .findByIdAndRemove(id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => {
+      response.status(400).send({ error: 'malformatted id' })
+    })
 })
 
 
