@@ -3,6 +3,15 @@ const app = express()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require('./models/person')
+
+const formatPerson = (person) => {
+  return {
+    name: person.name,
+    number: person.number,
+    id: person._id
+  }
+}
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -15,38 +24,13 @@ app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
 })
 
-let persons = [
-  {
-    name: "Arto Hellas",
-    number: "040-123456",
-    id: 1
-  },
-  {
-    name: "Matti Luukkainen",
-    number: "040-123456",
-    id: 2
-  },
-  {
-    name: "Arto Järvinen",
-    number: "040-123456",
-    id: 3
-  },
-  {
-    name: "Lea Kutvonen",
-    number: "040-123456",
-    id: 4
-  }
-]
 
-const generateId = () => {
-  function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
-  }
-  return getRandomInt(Math.pow(2,16))
-}
-
-app.get('/api/persons', (req, res) => {
-  res.json(persons)
+app.get('/api/persons', (request, response) => {
+  Person
+    .find({})
+    .then(persons => {
+      response.json(persons.map(formatPerson)
+    })
 })
 
 app.get('/api/persons/:id', (request, response) => {
