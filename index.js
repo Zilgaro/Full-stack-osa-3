@@ -52,19 +52,22 @@ app.post('/api/persons', (request, response) => {
     return response.status(400).json({ error: 'number missing' })
   }
 
+  /*
   if (persons.find(person => person.name === body.name)) {
     return response.status(400).json({ error: 'name already in use'})
   }
+  */
 
-  const person = {
+  const person = new Person({
     name: body.name,
     number: body.number,
-    id: generateId()
-  }
+  })
 
-  persons = persons.concat(person)
-
-  response.json(person)
+  person
+    .save()
+    .then(savedPerson => {
+      response.json(Person.format(savedPerson))
+    })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
