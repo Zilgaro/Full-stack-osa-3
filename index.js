@@ -88,13 +88,22 @@ app.post('/api/persons', (request, response) => {
     return response.status(400).json({ error: 'number missing' })
   }
 
-  person
-    .save()
-    .then(savedPerson => {
-      response.json(Person.format(savedPerson))
-    })
-    .catch(error => {
-      console.log(error)
+  Person
+    .find({name: person.name})
+    .then(query => {
+      console.log(query.length)
+      if (query.length > 0) {
+        response.status(400).send({error: 'Names must be unique!'})
+      } else {
+        person
+          .save()
+          .then(savedPerson => {
+            response.json(Person.format(savedPerson))
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      }
     })
 })
 
