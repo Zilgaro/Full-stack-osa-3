@@ -10,7 +10,7 @@ const expectedNumOfArguments = 2
 
 //Ekat kaksi ovat aina node ja itse skriptin sijainti
 const arguments = process.argv.slice(2)
-console.log(arguments)
+
 const Person = mongoose.model('Person', {
   name: String,
   number: String
