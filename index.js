@@ -45,27 +45,37 @@ app.get('/info', (req, res) => {
             ${Date()}</br>`)
 })
 
-app.post('/api/persons', (request, response) => {
+app.put('/api/persons/:id', (request,response) => {
   const body = request.body
 
-  if (body.name === undefined) {
-    return response.status(400).json({ error: 'name missing' })
-  }
+  const normalPerson = {name: body.name, number: body.number}
 
-  if (body.number === undefined) {
-    return response.status(400).json({ error: 'number missing' })
-  }
+  Person
+    .findByIdAndUpdate(request.params.id, normalPerson, {new: true} )
+    .then(updatedPerson => {
+      response.json(Person.format(updatedPerson))
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(400).send({ error: 'malformatted id' })
+    })
+})
 
-  /*
-  if (persons.find(person => person.name === body.name)) {
-    return response.status(400).json({ error: 'name already in use'})
-  }
-  */
+app.post('/api/persons', (request, response) => {
+  const body = request.body
 
   const person = new Person({
     name: body.name,
     number: body.number,
   })
+
+  if (person.name === undefined) {
+    return response.status(400).json({ error: 'name missing' })
+  }
+
+  if (person.number === undefined) {
+    return response.status(400).json({ error: 'number missing' })
+  }
 
   person
     .save()
