@@ -11,7 +11,6 @@ app.use(express.static('build'))
 morgan.token('JSON', function (req, res) { return JSON.stringify(req.body) })
 app.use(morgan(':method :url :JSON :status :res[content-length] - :response-time ms'))
 
-
 app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
 })
