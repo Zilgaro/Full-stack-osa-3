@@ -31,18 +31,29 @@ app.get('/api/persons', (request, response) => {
 
 app.get('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
+  Person
+    .findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(Person.format(person))
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(400).send({ error: 'malformatted id' })
+    })
 
-  if (person) {
-    response.json(person)
-  } else {
-    response.sendStatus(404);
-  }
 })
 
 app.get('/info', (req, res) => {
-  res.send(`<div>puhelinluettelossa ${persons.length} henkilön tiedot</div> <br>
-            ${Date()}</br>`)
+  Person
+    .find({})
+    .then(persons => {
+      res.send(`<div>puhelinluettelossa ${persons.length} henkilön tiedot</div> <br>
+                ${Date()}</br>`)
+    })
 })
 
 app.put('/api/persons/:id', (request,response) => {
